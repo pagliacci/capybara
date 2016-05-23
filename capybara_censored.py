@@ -49,7 +49,7 @@ def handle(msg):
             	result_string = result_string + i.encode("utf-8") 
         bot.sendMessage(chat_id, result_string)
 
-    if command == '/hey':
+    if command.startswith('/hey'):
     	pic_links = []
     	items = client.get_album_images('Bp8I9')
         for item in items:
@@ -62,7 +62,7 @@ def handle(msg):
         bot.sendPhoto(chat_id, cap_img)
     
     if command == '/inst':
-        r = requests.get('')
+        r = requests.get('\')
         data = r.text
         parsed_json = json.loads(data)
         data = parsed_json['data'][0]['images']['standard_resolution']['url']
@@ -70,9 +70,9 @@ def handle(msg):
         f.name = "name.jpg"
         bot.sendPhoto(chat_id, f)
     
-    if command == '/menu':
+    if command.startswith('/menu'):
         response = requests.get('http://www.lamantin-kafe.ru/lamantin-menu-bistro-obuhov/')
-        s = ""
+        s = "*Меню на сегодня*" + " *(" + now.strftime("%d/%m/%y") +"):* " + "\n"
         soup = BeautifulSoup(response.text, 'html.parser')
         menu = soup.tbody
         for tag in menu.find_all("td")[4:]:
@@ -86,10 +86,39 @@ def handle(msg):
                         temp_string = pre_temp_string.split(sep, 1)[0]
                     s = s + temp_string + "\n"
             except KeyError:
-                pass  
+                pass
+        s = s + "\n" + "Для вызова расширенной версии меню:" + "\n" + "/extend"  
         bot.sendMessage(chat_id, s, parse_mode='Markdown')
 
-bot = telepot.Bot('')
+    if command.startswith('/extend'):
+        response = requests.get('http://www.lamantin-kafe.ru/lamantin-menu-bistro-obuhov/')
+        s = "*Расширенная версия меню:*"
+        soup = BeautifulSoup(response.text, 'html.parser')
+        menu = soup.tbody
+        for tag in menu.find_all("td")[4:]:
+            try:
+                if tag[u'width'] == "75%":
+                    if tag.span:
+                        temp_string = "\n" + "*" + tag.get_text() + "*"
+                        content_string = ""  
+                    else:
+                        pre_temp_string = tag.get_text()
+                        sep = '/'
+                        if (pre_temp_string.split(sep,1)[0] != pre_temp_string.split(sep,1)[-1]):
+                            temp_string = pre_temp_string.split(sep, 1)[0]
+                            pre_content_string = pre_temp_string.split(sep, 1)[-1]
+                            content_string = " _(" + pre_content_string[:-1] + ")_ "
+                        else:
+                            temp_string = pre_temp_string.split(sep, 1)[0]
+                            content_string = ""
+                    s = s + temp_string + content_string + "\n"
+                if tag[u'width'] == "10%" and tag.get_text()!="":
+                    s = s + "Цена: " +  tag.get_text() + "\n"
+            except KeyError:
+                pass
+        bot.sendMessage(chat_id, s, parse_mode='Markdown')
+
+bot = telepot.Bot('\')
 bot.notifyOnMessage(handle)
 print ('I am listening ...')
 
@@ -112,4 +141,5 @@ while 1:
             bot.sendMessage(chat_id, "Your wish will definitely come true!")
             time.sleep(1)
         label = 0
+
 
