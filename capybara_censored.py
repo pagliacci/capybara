@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -25,9 +25,9 @@ label = 0
 
 def handle(msg):
     chat_id = msg['chat']['id']
-    full = msg['text']                   #ves' input pol'zovatelya
-    command = full.split(' ',1)[0]       #sama commanda
-    if (len(full.split(' ', 1)) != 1):               #obrabatyvaem dlya funkciy bez argumentov
+    full = msg['text']                   #all the user inputs
+    command = full.split(' ',1)[0]       #command itself
+    if (len(full.split(' ', 1)) != 1):               #handling for function without arguments
         argument = full.split(' ', 1)[1].lower()     #argument
     en_alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     ru_alphabet = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я']
@@ -35,17 +35,17 @@ def handle(msg):
     if command == '/atbash':
         result_string = ''
         for i in argument:
-            if i.encode("utf-8") in en_alphabet:                                  #prover'aem est' li on v alfavite
+            if i.encode("utf-8") in en_alphabet:                                #check if character presents in en alphabet
                 input_num = en_alphabet.index(i.encode("utf-8"))
                 output_num = (len(en_alphabet) - (input_num + 1))
                 result_elem = en_alphabet[output_num]
                 result_string = result_string + result_elem
-            elif i.encode("utf-8") in ru_alphabet:                                  #prover'aem est' li on v alfavite
+            elif i.encode("utf-8") in ru_alphabet:                              #check if character presents in ru alphabet
                 input_num = ru_alphabet.index(i.encode("utf-8"))
                 output_num = (len(ru_alphabet) - (input_num + 1))
                 result_elem = ru_alphabet[output_num]
                 result_string = result_string + result_elem    
-            else:                                              #esli net -> tupo ego dobavlyaem ne izmenaya
+            else:                                              #if no - adding this character without changes
             	result_string = result_string + i.encode("utf-8") 
         bot.sendMessage(chat_id, result_string)
 
@@ -53,8 +53,8 @@ def handle(msg):
     	pic_links = []
     	items = client.get_album_images('Bp8I9')
         for item in items:
-            pic_links.append(item.link)             #pihaem vse ssylki v odin list
-        pics_quantity = len(pic_links)              #schitaem razmer lista berem randomnoe znachenie i vivodim na ekran
+            pic_links.append(item.link)             #putting all the links in the same list
+        pics_quantity = len(pic_links)              #calculating size of list, taking random value and print
         pic_num = randint(0,pics_quantity)
         cap_img = urllib2.urlopen(pic_links[pic_num])
         cap_img.name = "cap_img.jpg"
